@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Deepfake Detector</title>
+    <title>Deepfake Detector</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <h1>🧠 Deepfake Detector</h1>
+<h1>🧠 AI Deepfake Detection System</h1>
 
-    <div class="drop-area" id="dropArea">
-        <p>Drag & Drop Image or Click</p>
-        <input type="file" id="fileInput" hidden>
-    </div>
+<select id="mode">
+    <option value="image">Image Detection</option>
+    <option value="video">Video Detection</option>
+</select>
 
-    <canvas id="canvas"></canvas>
+<input type="file" id="fileInput">
+<button onclick="uploadFile()">Analyze</button>
 
-    <button onclick="uploadFile()">Analyze</button>
-
-    <div id="result"></div>
-</div>
+<canvas id="canvas"></canvas>
+<div id="result"></div>
 
 <script src="script.js"></script>
 </body>
