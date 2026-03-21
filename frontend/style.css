@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.drop-area {
+    border: 2px dashed #38bdf8;
+    padding: 40px;
+    width: 300px;
+    margin: auto;
+    cursor: pointer;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+}
+
+canvas {
+    margin-top: 20px;
+    max-width: 400px;
+}
+
+.result-box {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.real {
+    background: #16a34a;
+}
+
+.fake {
+    background: #dc2626;
+}

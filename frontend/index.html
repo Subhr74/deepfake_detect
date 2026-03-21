@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Deepfake Detector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 Deepfake Detector</h1>
+
+    <div class="drop-area" id="dropArea">
+        <p>Drag & Drop Image or Click</p>
+        <input type="file" id="fileInput" hidden>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <button onclick="uploadFile()">Analyze</button>
+
+    <div id="result"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
