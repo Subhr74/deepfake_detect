@@ -1,140 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DeepScan — Deepfake Detection System</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-  <div class="noise"></div>
-  <div class="bg-glow"></div>
+<div class="noise"></div>
+<div class="grid-bg"></div>
 
-  <!-- ── Header ── -->
-  <header>
-    <div class="logo">
-      <span class="logo-icon">⬡</span>
-      <span class="logo-text">Deep<strong>Scan</strong></span>
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="hex">⬡</span>
+    <div>
+      <div class="logo-name">Deep<strong>Scan</strong></div>
+      <div class="logo-sub">Forensic Deepfake Detection</div>
     </div>
-    <div class="header-tag">AI · Computer Vision · Deepfake Detection</div>
-  </header>
+  </div>
+  <div class="header-chips">
+    <span class="chip">ELA</span>
+    <span class="chip">PRNU</span>
+    <span class="chip">Optical Flow</span>
+    <span class="chip">EfficientNet</span>
+  </div>
+</header>
 
-  <!-- ── Hero ── -->
-  <section class="hero">
-    <h1>Detect <em>Deepfakes</em><br/>with Precision</h1>
-    <p class="hero-sub">Upload an image or video and our 6-signal forensic engine will analyse every face for signs of AI manipulation.</p>
-  </section>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">10-Signal · Multi-Pillar · Real-World Detection</div>
+  <h1>Detect <em>Deepfakes</em> &amp;<br>AI-Generated Media</h1>
+  <p class="hero-desc">
+    Combining JPEG Error Level Analysis, wavelet sensor noise, FFT spectrum analysis,
+    optical flow and neural feature anomaly detection into a single forensic pipeline.
+  </p>
+  <div class="hero-badges">
+    <div class="badge"><span class="badge-n">10</span><span class="badge-l">Forensic Signals</span></div>
+    <div class="badge-sep"></div>
+    <div class="badge"><span class="badge-n">ELA</span><span class="badge-l">Error Level Analysis</span></div>
+    <div class="badge-sep"></div>
+    <div class="badge"><span class="badge-n">Flow</span><span class="badge-l">Optical Flow (Video)</span></div>
+  </div>
+</section>
 
-  <!-- ── Main ── -->
-  <main>
-    <div class="card">
+<!-- MAIN -->
+<main>
 
-      <!-- Tabs -->
-      <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="image" role="tab" aria-selected="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          Image
-        </button>
-        <button class="tab" data-tab="video" role="tab" aria-selected="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-          Video
-        </button>
-      </div>
-
-      <!-- Upload zone -->
-      <div class="upload-zone" id="uploadZone">
-        <div class="upload-icon">
-          <svg id="uploadIconImg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <svg id="uploadIconVid" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        </div>
-        <p class="upload-label">Drag & drop or <label for="fileInput" class="file-link">browse file</label></p>
-        <p class="upload-hint" id="uploadHint">PNG, JPG, JPEG, BMP, WEBP</p>
-        <input type="file" id="fileInput" accept="image/*" hidden />
-        <div class="file-chosen" id="fileChosen" style="display:none">
-          <span class="file-name" id="fileName"></span>
-          <button class="file-clear" id="fileClear" title="Remove">✕</button>
-        </div>
-      </div>
-
-      <button class="btn-analyse" id="analyseBtn" disabled>
-        <span class="btn-text">Analyse</span>
-        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  <!-- Upload card -->
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" data-tab="image">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Image
+      </button>
+      <button class="tab" data-tab="video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Video
       </button>
     </div>
 
-    <!-- Loading -->
-    <div class="loading-wrap" id="loadingWrap" style="display:none">
-      <div class="spinner-ring"></div>
-      <p class="loading-text" id="loadingText">Initialising forensics engine…</p>
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">
+        <div class="drop-ring"></div>
+        <svg id="iconImg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg id="iconVid" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <p class="drop-text">Drop file or <label for="fileInput" class="browse-link">browse</label></p>
+      <p class="drop-hint" id="dropHint">PNG · JPG · JPEG · BMP · WEBP</p>
+      <input type="file" id="fileInput" accept="image/*" hidden/>
+      <div class="chosen" id="chosen" style="display:none">
+        <div class="chosen-name">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="chosenName"></span>
+        </div>
+        <button class="clear-btn" id="clearBtn">✕</button>
+      </div>
     </div>
 
-    <!-- Results -->
-    <div class="results" id="results" style="display:none">
+    <button class="run-btn" id="runBtn" disabled>
+      Run Forensic Analysis
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
 
-      <!-- Verdict banner -->
-      <div class="verdict-banner" id="verdictBanner">
-        <div class="verdict-icon" id="verdictIcon"></div>
-        <div class="verdict-info">
-          <span class="verdict-label" id="verdictLabel"></span>
-          <span class="verdict-conf" id="verdictConf"></span>
-        </div>
-        <div class="verdict-meter">
-          <div class="meter-track">
-            <div class="meter-fill" id="meterFill"></div>
-          </div>
-          <div class="meter-labels"><span>Real</span><span>Fake</span></div>
-        </div>
-      </div>
+  <!-- LOADING -->
+  <div id="loading" style="display:none" class="loading">
+    <div class="spinner">
+      <div class="sp1"></div><div class="sp2"></div><div class="sp3"></div>
+    </div>
+    <p class="load-msg" id="loadMsg">Initialising…</p>
+    <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
 
-      <!-- Image results -->
-      <div id="imageResults">
-        <div class="section-title">Face Analysis</div>
-        <div class="face-grid" id="faceGrid"></div>
+  <!-- RESULTS -->
+  <div id="results" style="display:none">
 
-        <!-- Forensic signal breakdown -->
-        <div class="section-title" style="margin-top:22px;">Forensic Signal Breakdown</div>
-        <div class="signals-panel" id="signalsPanel"></div>
-      </div>
-
-      <!-- Video results -->
-      <div id="videoResults" style="display:none">
-        <div class="stats-row">
-          <div class="stat-card fake">
-            <span class="stat-num" id="fakeCount">0</span>
-            <span class="stat-lbl">Fake Frames</span>
-          </div>
-          <div class="stat-card real">
-            <span class="stat-num" id="realCount">0</span>
-            <span class="stat-lbl">Real Frames</span>
-          </div>
-          <div class="stat-card total">
-            <span class="stat-num" id="sampledCount">0</span>
-            <span class="stat-lbl">Frames Sampled</span>
-          </div>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="videoChart" height="240"></canvas>
+    <!-- Verdict -->
+    <div class="verdict" id="verdict">
+      <div class="v-left">
+        <div class="v-dot" id="vDot"></div>
+        <div>
+          <div class="v-label" id="vLabel">—</div>
+          <div class="v-sub"  id="vSub">—</div>
         </div>
       </div>
-
-      <p class="result-message" id="resultMessage"></p>
+      <div class="v-right">
+        <div class="gauge-wrap">
+          <svg viewBox="0 0 100 58" class="gauge-svg">
+            <path class="g-track" d="M8,55 A47,47 0 0,1 92,55" fill="none" stroke-width="8" stroke-linecap="round"/>
+            <path class="g-fill"  d="M8,55 A47,47 0 0,1 92,55" fill="none" stroke-width="8" stroke-linecap="round" id="gFill"/>
+          </svg>
+          <div class="gauge-pct" id="gPct">0%</div>
+          <div class="gauge-sub">Fake Probability</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Error -->
-    <div class="error-panel" id="errorPanel" style="display:none">
-      <span class="error-icon">⚠</span>
-      <p id="errorText"></p>
+    <!-- IMAGE ONLY SECTION -->
+    <div id="imgSection">
+
+      <!-- ELA + Pillar row -->
+      <div class="two-col">
+
+        <div class="panel">
+          <div class="panel-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            Error Level Analysis
+          </div>
+          <div class="ela-row">
+            <div class="ela-stat"><span class="ela-val" id="elaScore">—</span><span class="ela-lbl">ELA Score</span></div>
+            <div class="ela-stat"><span class="ela-val" id="elaMean">—</span><span class="ela-lbl">Mean</span></div>
+            <div class="ela-stat"><span class="ela-val" id="elaStd">—</span><span class="ela-lbl">Std Dev</span></div>
+          </div>
+          <div class="ela-bar-track"><div class="ela-bar-fill" id="elaBarFill"></div></div>
+          <p class="ela-note">Low mean + low std = AI-generated (no authentic JPEG compression history)</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Signal Pillars
+          </div>
+          <canvas id="radarChart" height="200"></canvas>
+        </div>
+
+      </div>
+
+      <!-- Face cards -->
+      <div class="section-hdr">
+        <span class="sec-title">Face Analysis</span>
+        <span class="sec-badge" id="faceBadge"></span>
+      </div>
+      <div class="face-row" id="faceRow"></div>
+
+      <!-- Signal breakdown -->
+      <div class="panel" id="sigPanel">
+        <div class="panel-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          10-Signal Forensic Breakdown
+        </div>
+        <div class="sig-grid" id="sigGrid"></div>
+      </div>
+
     </div>
-  </main>
 
-  <footer>
-    <p>DeepScan &nbsp;·&nbsp; Built with Flask, PyTorch &amp; OpenCV &nbsp;·&nbsp; 6-Signal Forensic Engine</p>
-  </footer>
+    <!-- VIDEO SECTION -->
+    <div id="vidSection" style="display:none">
+      <div class="stats-3">
+        <div class="sv fake"><span class="sv-n" id="fakeCount">0</span><span class="sv-l">Fake Frames</span></div>
+        <div class="sv real"><span class="sv-n" id="realCount">0</span><span class="sv-l">Real Frames</span></div>
+        <div class="sv neutral"><span class="sv-n" id="sampleCount">0</span><span class="sv-l">Analysed</span></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">Temporal Score: <span id="tempScore" style="color:var(--accent)">—</span></div>
+        <canvas id="videoChart" height="240"></canvas>
+      </div>
+    </div>
 
-  <script src="script.js"></script>
+    <p class="msg-bar" id="msgBar"></p>
+  </div>
+
+  <!-- ERROR -->
+  <div id="errPanel" style="display:none" class="err-panel">
+    <span class="err-ico">⚠</span>
+    <div><strong>Analysis Failed</strong><p id="errText"></p></div>
+  </div>
+
+</main>
+
+<footer>DeepScan &nbsp;·&nbsp; Wavelet Noise · FFT · ELA · PRNU · Optical Flow · EfficientNet-B0</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
