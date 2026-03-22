@@ -6,15 +6,15 @@
   <title>DeepScan — Deepfake Detection System</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
-  <!-- ── Noise texture overlay ─────────────────────── -->
   <div class="noise"></div>
+  <div class="bg-glow"></div>
 
-  <!-- ── Header ────────────────────────────────────── -->
+  <!-- ── Header ── -->
   <header>
     <div class="logo">
       <span class="logo-icon">⬡</span>
@@ -23,17 +23,17 @@
     <div class="header-tag">AI · Computer Vision · Deepfake Detection</div>
   </header>
 
-  <!-- ── Hero ──────────────────────────────────────── -->
+  <!-- ── Hero ── -->
   <section class="hero">
     <h1>Detect <em>Deepfakes</em><br/>with Precision</h1>
-    <p class="hero-sub">Upload an image or video and our MobileNetV2-powered engine will analyse every face for signs of AI manipulation.</p>
+    <p class="hero-sub">Upload an image or video and our 6-signal forensic engine will analyse every face for signs of AI manipulation.</p>
   </section>
 
-  <!-- ── Main card ─────────────────────────────────── -->
+  <!-- ── Main ── -->
   <main>
     <div class="card">
 
-      <!-- Tab selector -->
+      <!-- Tabs -->
       <div class="tabs" role="tablist">
         <button class="tab active" data-tab="image" role="tab" aria-selected="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -49,32 +49,30 @@
       <div class="upload-zone" id="uploadZone">
         <div class="upload-icon">
           <svg id="uploadIconImg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-          <svg id="uploadIconVid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="display:none"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <svg id="uploadIconVid" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
         </div>
         <p class="upload-label">Drag & drop or <label for="fileInput" class="file-link">browse file</label></p>
         <p class="upload-hint" id="uploadHint">PNG, JPG, JPEG, BMP, WEBP</p>
         <input type="file" id="fileInput" accept="image/*" hidden />
         <div class="file-chosen" id="fileChosen" style="display:none">
           <span class="file-name" id="fileName"></span>
-          <button class="file-clear" id="fileClear">✕</button>
+          <button class="file-clear" id="fileClear" title="Remove">✕</button>
         </div>
       </div>
 
-      <!-- Analyse button -->
       <button class="btn-analyse" id="analyseBtn" disabled>
         <span class="btn-text">Analyse</span>
         <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
-
     </div>
 
-    <!-- Loading state -->
+    <!-- Loading -->
     <div class="loading-wrap" id="loadingWrap" style="display:none">
-      <div class="spinner"></div>
-      <p class="loading-text" id="loadingText">Initialising model…</p>
+      <div class="spinner-ring"></div>
+      <p class="loading-text" id="loadingText">Initialising forensics engine…</p>
     </div>
 
-    <!-- Results panel -->
+    <!-- Results -->
     <div class="results" id="results" style="display:none">
 
       <!-- Verdict banner -->
@@ -84,15 +82,25 @@
           <span class="verdict-label" id="verdictLabel"></span>
           <span class="verdict-conf" id="verdictConf"></span>
         </div>
+        <div class="verdict-meter">
+          <div class="meter-track">
+            <div class="meter-fill" id="meterFill"></div>
+          </div>
+          <div class="meter-labels"><span>Real</span><span>Fake</span></div>
+        </div>
       </div>
 
-      <!-- Image-specific results -->
+      <!-- Image results -->
       <div id="imageResults">
         <div class="section-title">Face Analysis</div>
         <div class="face-grid" id="faceGrid"></div>
+
+        <!-- Forensic signal breakdown -->
+        <div class="section-title" style="margin-top:22px;">Forensic Signal Breakdown</div>
+        <div class="signals-panel" id="signalsPanel"></div>
       </div>
 
-      <!-- Video-specific results -->
+      <!-- Video results -->
       <div id="videoResults" style="display:none">
         <div class="stats-row">
           <div class="stat-card fake">
@@ -109,25 +117,22 @@
           </div>
         </div>
         <div class="chart-wrap">
-          <canvas id="videoChart" height="220"></canvas>
+          <canvas id="videoChart" height="240"></canvas>
         </div>
       </div>
 
-      <!-- Message -->
       <p class="result-message" id="resultMessage"></p>
-
     </div>
 
-    <!-- Error panel -->
+    <!-- Error -->
     <div class="error-panel" id="errorPanel" style="display:none">
       <span class="error-icon">⚠</span>
       <p id="errorText"></p>
     </div>
   </main>
 
-  <!-- ── Footer ─────────────────────────────────────── -->
   <footer>
-    <p>DeepScan — Final Year Engineering Project &nbsp;·&nbsp; Built with Flask, PyTorch &amp; OpenCV</p>
+    <p>DeepScan &nbsp;·&nbsp; Built with Flask, PyTorch &amp; OpenCV &nbsp;·&nbsp; 6-Signal Forensic Engine</p>
   </footer>
 
   <script src="script.js"></script>

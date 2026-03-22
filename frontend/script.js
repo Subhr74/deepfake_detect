@@ -1,19 +1,12 @@
-/**
- * DeepScan — script.js
- * Handles: tab switching, file upload, API calls, result rendering, Chart.js
- */
-
 "use strict";
 
-// ── Config ────────────────────────────────────────────────────────────────
 const API_BASE = "http://localhost:5000";
 
-// ── State ─────────────────────────────────────────────────────────────────
-let currentTab  = "image";   // "image" | "video"
+let currentTab   = "image";
 let selectedFile = null;
 let videoChart   = null;
 
-// ── DOM refs ──────────────────────────────────────────────────────────────
+// DOM
 const tabs          = document.querySelectorAll(".tab");
 const uploadZone    = document.getElementById("uploadZone");
 const fileInput     = document.getElementById("fileInput");
@@ -30,25 +23,36 @@ const resultsEl     = document.getElementById("results");
 const errorPanel    = document.getElementById("errorPanel");
 const errorText     = document.getElementById("errorText");
 
-// result sub-elements
 const verdictBanner = document.getElementById("verdictBanner");
 const verdictIcon   = document.getElementById("verdictIcon");
 const verdictLabel  = document.getElementById("verdictLabel");
 const verdictConf   = document.getElementById("verdictConf");
+const meterFill     = document.getElementById("meterFill");
 const imageResults  = document.getElementById("imageResults");
 const videoResults  = document.getElementById("videoResults");
 const faceGrid      = document.getElementById("faceGrid");
+const signalsPanel  = document.getElementById("signalsPanel");
 const fakeCountEl   = document.getElementById("fakeCount");
 const realCountEl   = document.getElementById("realCount");
 const sampledEl     = document.getElementById("sampledCount");
 const messageEl     = document.getElementById("resultMessage");
 
-// ── Tab switching ─────────────────────────────────────────────────────────
+// Signal display metadata
+const SIGNAL_META = {
+  frequency:    { label: "Frequency",    desc: "FFT / DCT spectral fingerprint" },
+  prnu:         { label: "PRNU / Noise", desc: "Camera sensor noise pattern" },
+  chromatic_ab: { label: "Chromatic AB", desc: "RGB lens aberration proxy" },
+  skin_texture: { label: "Skin Texture", desc: "Micro-texture & LBP uniformity" },
+  neural:       { label: "Neural",       desc: "MobileNetV2 feature anomaly" },
+  colour:       { label: "Colour",       desc: "Saturation smoothness" },
+};
+
+// ── Tabs ──────────────────────────────────────────────────────────────────
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
-    tabs.forEach(t => { t.classList.remove("active"); t.setAttribute("aria-selected", "false"); });
+    tabs.forEach(t => { t.classList.remove("active"); t.setAttribute("aria-selected","false"); });
     tab.classList.add("active");
-    tab.setAttribute("aria-selected", "true");
+    tab.setAttribute("aria-selected","true");
     currentTab = tab.dataset.tab;
     updateTabUI();
     clearFile();
@@ -70,44 +74,30 @@ function updateTabUI() {
   }
 }
 
-// ── File selection ────────────────────────────────────────────────────────
-fileInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (file) setFile(file);
-});
+// ── File handling ──────────────────────────────────────────────────────────
+fileInput.addEventListener("change", e => { if (e.target.files[0]) setFile(e.target.files[0]); });
 
 uploadZone.addEventListener("click", e => {
-  // Don't trigger if clicking the clear button or label
   if (e.target.closest(".file-clear") || e.target.classList.contains("file-link")) return;
   if (!selectedFile) fileInput.click();
 });
 
-fileClear.addEventListener("click", e => {
-  e.stopPropagation();
-  clearFile();
-  hideAll();
-});
+fileClear.addEventListener("click", e => { e.stopPropagation(); clearFile(); hideAll(); });
 
-// Drag & drop
-uploadZone.addEventListener("dragover", e => {
-  e.preventDefault();
-  uploadZone.classList.add("drag-over");
-});
+uploadZone.addEventListener("dragover",  e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
 uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
 uploadZone.addEventListener("drop", e => {
   e.preventDefault();
   uploadZone.classList.remove("drag-over");
-  const file = e.dataTransfer.files[0];
-  if (file) setFile(file);
+  if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
 });
 
-function setFile(file) {
-  selectedFile = file;
-  fileNameEl.textContent = file.name;
+function setFile(f) {
+  selectedFile = f;
+  fileNameEl.textContent = f.name;
   fileChosen.style.display = "flex";
   analyseBtn.disabled = false;
 }
-
 function clearFile() {
   selectedFile = null;
   fileInput.value = "";
@@ -115,206 +105,181 @@ function clearFile() {
   analyseBtn.disabled = true;
 }
 
-// ── Analyse ───────────────────────────────────────────────────────────────
+// ── Analyse ────────────────────────────────────────────────────────────────
 analyseBtn.addEventListener("click", runAnalysis);
 
 async function runAnalysis() {
   if (!selectedFile) return;
-
   hideAll();
   showLoading("Uploading file…");
   analyseBtn.disabled = true;
 
-  const formData = new FormData();
-  formData.append("file", selectedFile);
+  const msgs = currentTab === "image"
+    ? ["Uploading file…","Detecting faces…","Running forensics…","Computing verdict…"]
+    : ["Uploading video…","Decoding frames…","Running forensics…","Computing verdict…"];
 
-  const endpoint = currentTab === "image"
-    ? `${API_BASE}/detect/image`
-    : `${API_BASE}/detect/video`;
+  let mi = 0;
+  const iv = setInterval(() => { loadingText.textContent = msgs[++mi % msgs.length]; }, 2000);
 
-  // Cycle loading messages to hint at progress
-  const messages = currentTab === "image"
-    ? ["Uploading file…", "Detecting faces…", "Running inference…", "Almost done…"]
-    : ["Uploading video…", "Decoding frames…", "Analysing faces…", "Computing verdict…"];
-
-  let msgIdx = 0;
-  const msgInterval = setInterval(() => {
-    msgIdx = (msgIdx + 1) % messages.length;
-    loadingText.textContent = messages[msgIdx];
-  }, 1800);
+  const fd = new FormData();
+  fd.append("file", selectedFile);
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      body: formData,
-    });
+    const res = await fetch(`${API_BASE}/detect/${currentTab}`, { method:"POST", body: fd });
+    clearInterval(iv);
 
-    clearInterval(msgInterval);
-
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
-      showError(err.error || "Server error");
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+      showError(e.error || "Server error");
       return;
     }
 
-    const data = await response.json();
+    const data = await res.json();
     hideAll();
-
-    if (currentTab === "image") {
-      renderImageResults(data);
-    } else {
-      renderVideoResults(data);
-    }
-
+    currentTab === "image" ? renderImageResults(data) : renderVideoResults(data);
     resultsEl.style.display = "";
   } catch (err) {
-    clearInterval(msgInterval);
-    showError(`Could not reach the backend. Make sure the Flask server is running on ${API_BASE}. (${err.message})`);
+    clearInterval(iv);
+    showError(`Cannot reach backend at ${API_BASE}. Make sure Flask is running.\n(${err.message})`);
   } finally {
     analyseBtn.disabled = false;
   }
 }
 
-// ── Image results renderer ────────────────────────────────────────────────
+// ── Image results ──────────────────────────────────────────────────────────
 function renderImageResults(data) {
-  // Overall verdict
-  const label = data.overall_label || (data.results?.[0]?.label) || "Unknown";
+  const label = data.overall_label || data.results?.[0]?.label || "Unknown";
   const conf  = data.overall_confidence ?? data.results?.[0]?.confidence ?? 0;
   setVerdict(label, conf);
 
   // Face cards
   faceGrid.innerHTML = "";
-  const faces = data.results || [];
+  (data.results || []).forEach((f, i) => {
+    const pct = Math.round(f.confidence * 100);
+    const cls = f.label === "Fake" ? "fake" : "real";
+    const bb  = f.bounding_box || [];
+    const card = document.createElement("div");
+    card.className = `face-card ${cls}`;
+    card.innerHTML = `
+      <div class="face-number">FACE ${i + 1}</div>
+      <div class="face-label">${f.label}</div>
+      <div class="face-conf">${pct}% confidence</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${pct}%"></div></div>
+      ${bb.length === 4 ? `<div class="face-bbox">x:${bb[0]} y:${bb[1]} w:${bb[2]} h:${bb[3]}</div>` : ""}
+    `;
+    faceGrid.appendChild(card);
+  });
 
-  if (faces.length === 0) {
-    faceGrid.innerHTML = `<p style="color:var(--text-muted);font-size:.88rem;">No face data returned.</p>`;
-  } else {
-    faces.forEach((f, i) => {
-      const pct  = Math.round(f.confidence * 100);
-      const cls  = f.label === "Fake" ? "fake" : "real";
-      const bbox = f.bounding_box || [];
-      const bboxStr = bbox.length === 4
-        ? `x:${bbox[0]} y:${bbox[1]} w:${bbox[2]} h:${bbox[3]}`
-        : "";
+  // Signal breakdown — use signals from first face result
+  const signals = data.results?.[0]?.signals || {};
+  renderSignals(signals);
 
-      const card = document.createElement("div");
-      card.className = `face-card ${cls}`;
-      card.innerHTML = `
-        <div class="face-number">FACE ${i + 1}</div>
-        <div class="face-label">${f.label}</div>
-        <div class="face-conf">${pct}% confidence</div>
-        <div class="conf-bar"><div class="conf-fill" style="width:${pct}%"></div></div>
-        ${bboxStr ? `<div class="face-bbox">${bboxStr}</div>` : ""}
-      `;
-      faceGrid.appendChild(card);
-    });
-  }
-
-  imageResults.style.display  = "";
-  videoResults.style.display  = "none";
-  messageEl.textContent        = data.message || "";
-  messageEl.style.display      = data.message ? "" : "none";
+  imageResults.style.display = "";
+  videoResults.style.display = "none";
+  messageEl.textContent = data.message || "";
+  messageEl.style.display = data.message ? "" : "none";
 }
 
-// ── Video results renderer ────────────────────────────────────────────────
+// ── Signal breakdown ───────────────────────────────────────────────────────
+function renderSignals(signals) {
+  signalsPanel.innerHTML = "";
+  const keys = Object.keys(SIGNAL_META);
+
+  keys.forEach(key => {
+    if (!(key in signals)) return;
+    const raw   = signals[key];           // 0..1, higher = more fake
+    const pct   = Math.round(raw * 100);
+    const isFake = raw >= 0.38;
+    const meta  = SIGNAL_META[key];
+
+    // Colour: green (real) → yellow → red (fake)
+    const r = Math.round(82  + (255 - 82)  * raw);
+    const g = Math.round(232 + (82  - 232) * raw);
+    const b = Math.round(158 + (82  - 158) * raw);
+    const barColor = `rgb(${r},${g},${b})`;
+
+    const row = document.createElement("div");
+    row.className = "signal-row";
+    row.innerHTML = `
+      <span class="signal-name" title="${meta.desc}">${meta.label}</span>
+      <div class="signal-bar-wrap">
+        <div class="signal-bar" style="width:${pct}%;background:${barColor}"></div>
+      </div>
+      <span class="signal-pct" style="color:${barColor}">${pct}%</span>
+      <span class="signal-label-tag ${isFake ? 'fake' : 'real'}">${isFake ? 'FAKE' : 'REAL'}</span>
+    `;
+    signalsPanel.appendChild(row);
+  });
+
+  if (signalsPanel.children.length === 0) {
+    signalsPanel.innerHTML = `<p style="color:var(--muted);font-size:.84rem;">No signal data available.</p>`;
+  }
+}
+
+// ── Video results ──────────────────────────────────────────────────────────
 function renderVideoResults(data) {
-  const label = data.label || "Unknown";
-  const conf  = data.confidence ?? 0;
-  setVerdict(label, conf);
-
-  fakeCountEl.textContent    = data.fake_count   ?? 0;
-  realCountEl.textContent    = data.real_count    ?? 0;
-  sampledEl.textContent      = data.frames_sampled ?? 0;
-  messageEl.textContent      = data.message || "";
-  messageEl.style.display    = data.message ? "" : "none";
-
+  setVerdict(data.label || "Unknown", data.confidence ?? 0);
+  fakeCountEl.textContent = data.fake_count   ?? 0;
+  realCountEl.textContent = data.real_count   ?? 0;
+  sampledEl.textContent   = data.frames_sampled ?? 0;
+  messageEl.textContent   = data.message || "";
+  messageEl.style.display = data.message ? "" : "none";
   imageResults.style.display = "none";
   videoResults.style.display = "";
-
   renderVideoChart(data.fake_count ?? 0, data.real_count ?? 0);
 }
 
-// ── Chart.js donut ────────────────────────────────────────────────────────
+// ── Chart ──────────────────────────────────────────────────────────────────
 function renderVideoChart(fake, real) {
-  const ctx = document.getElementById("videoChart").getContext("2d");
-
-  if (videoChart) {
-    videoChart.destroy();
-    videoChart = null;
-  }
-
+  if (videoChart) { videoChart.destroy(); videoChart = null; }
   if (fake === 0 && real === 0) return;
-
+  const ctx = document.getElementById("videoChart").getContext("2d");
   videoChart = new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["Fake Frames", "Real Frames"],
+      labels: ["Fake Frames","Real Frames"],
       datasets: [{
         data: [fake, real],
-        backgroundColor: ["rgba(255,82,82,.85)", "rgba(87,232,158,.85)"],
-        borderColor:     ["rgba(255,82,82,1)",   "rgba(87,232,158,1)"],
-        borderWidth: 2,
-        hoverOffset: 6,
+        backgroundColor: ["rgba(255,82,82,.85)","rgba(82,232,158,.85)"],
+        borderColor:     ["rgba(255,82,82,1)",  "rgba(82,232,158,1)"],
+        borderWidth: 2, hoverOffset: 6,
       }],
     },
     options: {
-      responsive: true,
-      cutout: "65%",
+      responsive: true, cutout: "65%",
       plugins: {
         legend: {
           position: "bottom",
-          labels: {
-            color: "#9da3b4",
-            font: { family: "'Space Mono', monospace", size: 11 },
-            padding: 20,
-            usePointStyle: true,
-            pointStyleWidth: 10,
-          },
+          labels: { color:"#636878", font:{ family:"'Space Mono',monospace", size:11 }, padding:20, usePointStyle:true },
         },
         tooltip: {
-          backgroundColor: "#13151a",
-          borderColor: "#252830",
-          borderWidth: 1,
-          titleColor: "#e2e4ec",
-          bodyColor: "#9da3b4",
-          padding: 12,
-          callbacks: {
-            label: ctx => {
-              const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-              const pct = total ? Math.round(ctx.parsed / total * 100) : 0;
-              return `  ${ctx.parsed} frames (${pct}%)`;
-            },
-          },
+          backgroundColor:"#111318", borderColor:"#22252f", borderWidth:1,
+          titleColor:"#dde1ee", bodyColor:"#636878", padding:12,
+          callbacks: { label: c => {
+            const tot = c.dataset.data.reduce((a,b) => a+b, 0);
+            return `  ${c.parsed} frames (${tot ? Math.round(c.parsed/tot*100) : 0}%)`;
+          }},
         },
       },
-      animation: { animateRotate: true, duration: 800, easing: "easeInOutQuart" },
+      animation: { animateRotate:true, duration:800, easing:"easeInOutQuart" },
     },
   });
 }
 
-// ── Verdict helper ────────────────────────────────────────────────────────
+// ── Verdict ────────────────────────────────────────────────────────────────
 function setVerdict(label, confidence) {
   const isFake = label === "Fake";
   verdictBanner.className = `verdict-banner ${isFake ? "fake" : "real"}`;
   verdictIcon.textContent  = isFake ? "🔴" : "🟢";
   verdictLabel.textContent = label;
   verdictConf.textContent  = `Confidence: ${Math.round(confidence * 100)}%`;
+  // Meter: shows position across Real–Fake spectrum
+  // fake_prob = confidence if Fake, else 1-confidence
+  const fakeProbForMeter = isFake ? confidence : 1 - confidence;
+  meterFill.style.width = `${Math.round(fakeProbForMeter * 100)}%`;
 }
 
-// ── UI helpers ────────────────────────────────────────────────────────────
-function showLoading(msg) {
-  loadingText.textContent  = msg;
-  loadingWrap.style.display = "";
-}
-
-function showError(msg) {
-  hideAll();
-  errorText.textContent   = msg;
-  errorPanel.style.display = "";
-}
-
-function hideAll() {
-  loadingWrap.style.display  = "none";
-  resultsEl.style.display     = "none";
-  errorPanel.style.display    = "none";
-}
+// ── Helpers ────────────────────────────────────────────────────────────────
+function showLoading(msg) { loadingText.textContent = msg; loadingWrap.style.display = ""; }
+function showError(msg)   { hideAll(); errorText.textContent = msg; errorPanel.style.display = ""; }
+function hideAll()        { loadingWrap.style.display = resultsEl.style.display = errorPanel.style.display = "none"; }
