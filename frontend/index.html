@@ -20,31 +20,33 @@
     <span class="hex">⬡</span>
     <div>
       <div class="logo-name">Deep<strong>Scan</strong></div>
-      <div class="logo-sub">Forensic Deepfake Detection</div>
+      <div class="logo-sub">Multi-Modal Forensic Detection</div>
     </div>
   </div>
   <div class="header-chips">
-    <span class="chip">ELA</span>
-    <span class="chip">PRNU</span>
-    <span class="chip">Optical Flow</span>
-    <span class="chip">EfficientNet</span>
+    <span class="chip">Image</span>
+    <span class="chip">Video</span>
+    <span class="chip">Voice</span>
+    <span class="chip">ELA · Bayar · MFCC</span>
+    <span class="chip online">● ONLINE</span>
   </div>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-tag">10-Signal · Multi-Pillar · Real-World Detection</div>
-  <h1>Detect <em>Deepfakes</em> &amp;<br>AI-Generated Media</h1>
+  <div class="hero-tag">Image · Video · Voice — All-in-One Forensic Engine</div>
+  <h1>Detect <em>Deepfakes</em>,<br>AI Images &amp; Cloned Voices</h1>
   <p class="hero-desc">
-    Combining JPEG Error Level Analysis, wavelet sensor noise, FFT spectrum analysis,
-    optical flow and neural feature anomaly detection into a single forensic pipeline.
+    Three detection engines in one: image forensics with ELA &amp; wavelet noise,
+    video frame analysis with optical flow &amp; temporal consistency, and voice
+    deepfake detection using spectral MFCC fingerprinting with a trained ML ensemble.
   </p>
   <div class="hero-badges">
-    <div class="badge"><span class="badge-n">10</span><span class="badge-l">Forensic Signals</span></div>
+    <div class="badge"><span class="badge-n">Image</span><span class="badge-l">ELA · Bayar · EfficientNet</span></div>
     <div class="badge-sep"></div>
-    <div class="badge"><span class="badge-n">ELA</span><span class="badge-l">Error Level Analysis</span></div>
+    <div class="badge"><span class="badge-n">Video</span><span class="badge-l">Optical Flow · Temporal</span></div>
     <div class="badge-sep"></div>
-    <div class="badge"><span class="badge-n">Flow</span><span class="badge-l">Optical Flow (Video)</span></div>
+    <div class="badge"><span class="badge-n">Voice</span><span class="badge-l">Spectral · MFCC · ML</span></div>
   </div>
 </section>
 
@@ -55,27 +57,59 @@
   <div class="card">
     <div class="tabs">
       <button class="tab active" data-tab="image">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
         Image
       </button>
       <button class="tab" data-tab="video">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
         Video
+      </button>
+      <button class="tab" data-tab="voice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        Voice
       </button>
     </div>
 
     <div class="drop-zone" id="dropZone">
       <div class="drop-icon">
         <div class="drop-ring"></div>
-        <svg id="iconImg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        <svg id="iconVid" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <svg id="iconImg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <svg id="iconVid" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2"/>
+        </svg>
+        <svg id="iconVoice" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
       </div>
       <p class="drop-text">Drop file or <label for="fileInput" class="browse-link">browse</label></p>
       <p class="drop-hint" id="dropHint">PNG · JPG · JPEG · BMP · WEBP</p>
       <input type="file" id="fileInput" accept="image/*" hidden/>
       <div class="chosen" id="chosen" style="display:none">
         <div class="chosen-name">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
           <span id="chosenName"></span>
         </div>
         <button class="clear-btn" id="clearBtn">✕</button>
@@ -84,7 +118,10 @@
 
     <button class="run-btn" id="runBtn" disabled>
       Run Forensic Analysis
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="12 5 19 12 12 19"/>
+      </svg>
     </button>
   </div>
 
@@ -95,6 +132,7 @@
     </div>
     <p class="load-msg" id="loadMsg">Initialising…</p>
     <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="pipe-steps" id="pipeSteps"></div>
   </div>
 
   <!-- RESULTS -->
@@ -106,7 +144,7 @@
         <div class="v-dot" id="vDot"></div>
         <div>
           <div class="v-label" id="vLabel">—</div>
-          <div class="v-sub"  id="vSub">—</div>
+          <div class="v-sub"   id="vSub">—</div>
         </div>
       </div>
       <div class="v-right">
@@ -121,15 +159,15 @@
       </div>
     </div>
 
-    <!-- IMAGE ONLY SECTION -->
+    <!-- ══ IMAGE SECTION ══ -->
     <div id="imgSection">
 
-      <!-- ELA + Pillar row -->
       <div class="two-col">
-
         <div class="panel">
           <div class="panel-head">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
             Error Level Analysis
           </div>
           <div class="ela-row">
@@ -140,28 +178,28 @@
           <div class="ela-bar-track"><div class="ela-bar-fill" id="elaBarFill"></div></div>
           <p class="ela-note">Low mean + low std = AI-generated (no authentic JPEG compression history)</p>
         </div>
-
         <div class="panel">
           <div class="panel-head">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
             Signal Pillars
           </div>
           <canvas id="radarChart" height="200"></canvas>
         </div>
-
       </div>
 
-      <!-- Face cards -->
       <div class="section-hdr">
         <span class="sec-title">Face Analysis</span>
         <span class="sec-badge" id="faceBadge"></span>
       </div>
       <div class="face-row" id="faceRow"></div>
 
-      <!-- Signal breakdown -->
-      <div class="panel" id="sigPanel">
+      <div class="panel">
         <div class="panel-head">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
           10-Signal Forensic Breakdown
         </div>
         <div class="sig-grid" id="sigGrid"></div>
@@ -169,7 +207,7 @@
 
     </div>
 
-    <!-- VIDEO SECTION -->
+    <!-- ══ VIDEO SECTION ══ -->
     <div id="vidSection" style="display:none">
       <div class="stats-3">
         <div class="sv fake"><span class="sv-n" id="fakeCount">0</span><span class="sv-l">Fake Frames</span></div>
@@ -177,23 +215,69 @@
         <div class="sv neutral"><span class="sv-n" id="sampleCount">0</span><span class="sv-l">Analysed</span></div>
       </div>
       <div class="panel">
-        <div class="panel-head">Temporal Score: <span id="tempScore" style="color:var(--accent)">—</span></div>
+        <div class="panel-head">
+          Temporal Score: <span id="tempScore" style="color:var(--accent)">—</span>
+        </div>
         <canvas id="videoChart" height="240"></canvas>
       </div>
     </div>
 
-    <p class="msg-bar" id="msgBar"></p>
+    <!-- ══ VOICE SECTION ══ -->
+    <div id="voiceSection" style="display:none">
+
+      <div class="stats-3">
+        <div class="sv blue">  <span class="sv-n" id="vDuration">—</span>  <span class="sv-l">Duration (s)</span></div>
+        <div class="sv purple"><span class="sv-n" id="vSampleRate">—</span><span class="sv-l">Sample Rate</span></div>
+        <div class="sv neutral"><span class="sv-n" id="vSegments">—</span>  <span class="sv-l">Segments</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          </svg>
+          Voice Analysis Detail
+        </div>
+        <p class="voice-detail" id="voiceDetail">—</p>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Audio Forensic Signals
+          </div>
+          <div class="voice-sig-list" id="voiceSigList"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">Signal Importance Profile</div>
+          <canvas id="voiceChart" height="220"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="msg-bar" id="msgBar" style="display:none"></p>
   </div>
 
   <!-- ERROR -->
   <div id="errPanel" style="display:none" class="err-panel">
     <span class="err-ico">⚠</span>
-    <div><strong>Analysis Failed</strong><p id="errText"></p></div>
+    <div>
+      <strong>Analysis Failed</strong>
+      <p id="errText"></p>
+    </div>
   </div>
 
 </main>
 
-<footer>DeepScan &nbsp;·&nbsp; Wavelet Noise · FFT · ELA · PRNU · Optical Flow · EfficientNet-B0</footer>
+<footer>
+  DeepScan &nbsp;·&nbsp; Image · Video · Voice Deepfake Detection &nbsp;·&nbsp;
+  ELA · Wavelet Noise · FFT · Optical Flow · Spectral MFCC · ML Ensemble
+</footer>
 
 <script src="script.js"></script>
 </body>
