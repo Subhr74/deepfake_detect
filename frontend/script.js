@@ -1,6 +1,6 @@
 "use strict";
 
-const API = "http://localhost:5000";
+const API = window.location.origin;  // auto-uses whatever port Flask is running on
 let tab = "image", file = null, vChart = null, rChart = null, voiceChart = null;
 
 const $ = id => document.getElementById(id);
